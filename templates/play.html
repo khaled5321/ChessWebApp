@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../static/css/dist/output.css" rel="stylesheet">
+    <link href="../static/css/dist/chessboard.css" rel="stylesheet">
+
+    <script type="text/javascript">
+        var player1='{{session["username"]}}'
+        var mode='{{ data.mode }}'
+        var timecontrol='{{ data.timecontrol }}'
+        var minutes='{{ data.minutes }}'
+        var seconds='{{ data.seconds }}'
+        var turn='{{ data.turn }}'
+    </script>
+    <script src="../static/js/jquery.min.js"></script>
+    <script src="../static/js/chessboard.js"></script>
+    <script src="../static/js/chessscript.js" type="module" defer></script>    
+    <title>KChess</title>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar bg-primary text-primary-content justify-center">
+            <a href="/" class="normal-case text-xl ml-[-3.75rem]">
+                <img src="../static/img/pawn-svgrepo-com.svg" class="mask mask-hexagon mr-2" alt="pawn logo">
+                <h1 class="font-bold font-mono text-xl">KChess</h1>
+            </a>
+        </nav>
+    </header>
+
+    <main class="py-8">
+        <div class="flex flex-col lg:flex-row lg:max-w-full lg:justify-center gap-16 max-w-[20rem] md:max-w-lg mx-auto mt-6">
+            <div class="flex  justify-center">
+
+                <div id="board" class="w-[400px]"></div>
+
+            </div>
+
+            <div id="dashboard" class="flex flex-col bg-neutral-focus rounded shadow-2xl">
+                <h2 id="status" class="text-center my-2 font-bold text-white"></h2>
+                <div class="divider mb-0"></div>
+
+                <div class="flex justify-between items-center mx-4 mt-2 gap-16">
+                    <h3 id="player2" class="text-left text-3xl text-info">Player2</h3>
+
+                    <div id="clock2" class="p-3 bg-base-100 rounded-box text-white">
+                        <span id="clock2-min" class="font-mono text-4xl">00</span>
+                        <span class="font-mono text-4xl">:</span>
+                        <span id="clock2-sec" class="font-mono text-4xl">00</span>
+                    </div>
+                </div>
+
+                <div class="divider mb-0"></div>
+
+                <div class="flex justify-between items-center mx-4 my-2 gap-16">
+                    <h3 id="player1" class="text-left text-3xl text-info">Player1</h3>
+
+                    <div id="clock1" class="p-3 bg-base-100 rounded-box text-white">
+                        <span id="clock1-min" class="font-mono text-4xl">00</span>
+                        <span class="font-mono text-4xl">:</span>
+                        <span id="clock1-sec" class="font-mono text-4xl">00</span>
+                    </div>
+                </div>
+
+                <div class="divider my-0"></div>
+
+                <div class="flex flex-col md:flex-row items-center px-2 justify-center py-6 gap-6">
+                    <button id="offer_draw" class="btn btn-outline btn-accent">Draw</button>
+                    <button id="surrender" class="btn btn-primary">Surrender</button>
+                    <button id="take_back" class="btn btn-outline btn-secondary">Tack Back</button>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer footer-center p-4 bg-base-300 text-base-content">
+        <div>
+            <p>Made By <a href="https://github.com/khaled5321" class="link link-hover">Khaled Emad</a></p>
+        </div>
+    </footer>
+</body>
+
+</html>

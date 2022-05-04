@@ -3,6 +3,7 @@
 # data = cursor.fetchone()
 # cursor.close()
 import os
+import random
 from flask import (
     Flask,
     render_template,
@@ -10,6 +11,7 @@ from flask import (
     request,
     redirect,
     url_for,
+    session,
 )
 from flaskext.mysql import MySQL
 
@@ -19,13 +21,59 @@ app.config["MYSQL_DATABASE_USER"] = "root"
 app.config["MYSQL_DATABASE_PASSWORD"] = "admin"
 app.config["MYSQL_DATABASE_DB"] = "db"
 app.config["MYSQL_DATABASE_HOST"] = "localhost"
+app.secret_key = "random string"
 mysql.init_app(app)
 db = mysql.connect()
+
+time_minutes = {"1": 1, "2": 5, "3": 10, "4": 15, "5": 30}
+time_seconds = {"1": 3, "2": 5, "3": 10, "4": 15, "5": 20}
+sides = ["white", "black"]
 
 
 @app.route("/")
 def home():
-    return "home"  # ! fix this
+    return render_template("home.html")
+
+
+@app.route("/play/online", methods=["POST"])
+def play_online():
+    return render_template("play.html")
+
+
+@app.route("/play/offline", methods=["POST"])
+def play_offline():
+    time_control = request.form.get("time_control")
+    minutes = time_minutes[request.form.get("minutes")]
+    seconds = time_seconds[request.form.get("seconds")]
+    if time_control == "unlimited":
+        minutes = None
+        seconds = None
+
+    data = {
+        "timecontrol": time_control,
+        "minutes": minutes,
+        "seconds": seconds,
+        "turn": "",
+        "mode": "offline",
+    }
+
+    return render_template("play.html", data=data)
+
+
+@app.route("/play/stockfish", methods=["POST"])
+def play_stockfish():
+    turn = request.form.get("side")
+    if turn == "random":
+        turn = random.choice(sides)
+
+    data = {
+        "timecontrol": "",
+        "minutes": "",
+        "seconds": "",
+        "turn": turn,
+        "mode": "stockfish",
+    }
+    return render_template("play.html", data=data)
 
 
 @app.route("/login", methods=["GET"])
@@ -40,7 +88,6 @@ def handle_login():
     password = request.form.get("pass")
     cursor.execute(f'SELECT * from login_cred WHERE email="{email}"')
     data = cursor.fetchone()
-    cursor.close()
     if not data:
         return render_template(
             "login.html", isMsg=True, msg="Email or password is incorrect"
@@ -50,7 +97,12 @@ def handle_login():
             "login.html", isMsg=True, msg="Email or password is incorrect"
         )
 
-    return f"{email} and {password}"
+    cursor.execute(f'SELECT username from users WHERE user_id="{data[1]}"')
+    username = cursor.fetchone()[0]
+    session["username"] = username
+    cursor.close()
+
+    return redirect(url_for(".home"))
 
 
 @app.route("/register", methods=["GET"])
@@ -103,9 +155,21 @@ def handle_register():
     )
 
 
+@app.route("/logout")
+def logout():
+    session.pop("username", None)
+    return redirect(url_for(".home"))
+
+
+@app.route("/profile")
+def profile():
+    return "profile"
+
+
 @app.route("/favicon.ico")
 def favicon():
     return send_from_directory(os.path.join(app.root_path, "static"), "favicon.ico")
 
 
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)
