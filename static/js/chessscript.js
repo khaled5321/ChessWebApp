@@ -1,4 +1,6 @@
 import {Chess} from './chess.js'
+import {Timer, startTimer, swapPlayer, stopTimer } from './chessclock.js';
+
 
 let board = null
 let game_over=false; //chess.js library doens't provide a gameover flag to manually end the game
@@ -29,6 +31,8 @@ function onDrop (source, target) {
     status.innerHTML=`${game_turn} is in Check!`;
   }
   else if(game.game_over()){
+    stopTimer();
+
     if(game.in_checkmate()){
       let game_turn=(game.turn()==='w')?('Black'):('White');
       status.innerHTML=`Checkmate! ${game_turn} Won!`;
@@ -46,7 +50,6 @@ function onDrop (source, target) {
       status.innerHTML=`Game Ended. Insufficient Material!`;
     }
   }
-
   // illegal move
   if (move === null) return 'snapback'
 }
@@ -55,6 +58,8 @@ function onDrop (source, target) {
 // for castling, en passant, pawn promotion
 function onSnapEnd () {
   board.position(game.fen())
+
+  swapPlayer();
   if(mode==="offline"){
     board.flip()
   }
@@ -68,34 +73,39 @@ const config = {
   onSnapEnd: onSnapEnd,
   orientation:(turn)?(turn):("white")
 }
-board = Chessboard('board', config)
+board = Chessboard('board', config);
 
-const player1_name=document.getElementById("player1");
+let p1timer = new Timer('w', parseInt(minutes, 10));
+let p2timer = new Timer('b', parseInt(minutes, 10));
+startTimer(p1timer,p2timer)
+
+const player1_name=document.getElementById("player1"); //player1 label
 const player2_name=document.getElementById("player2");
+const status=document.getElementById("status");
 const clock_player1=document.getElementById("clock1");
 const clock_player2=document.getElementById("clock2");
-const status=document.getElementById("status");
 const draw_button=document.getElementById("offer_draw");
 const surrender_button=document.getElementById("surrender");
 const takeback_button=document.getElementById("take_back");
 
 //if the user is logged in display his user name
-player1_name.innerText=(player1)? (player1) : ("Player1"); 
-if(mode==="stockfish"){
+player1_name.innerText=(player1)? (player1) : ("Player1");
+
+// time unlimited hide clocks [to maintain ui diminsions]
+if(timecontrol==="unlimited"|| mode==="stockfish"){
+  clock_player1.style.visibility="hidden"
+  clock_player2.style.visibility="hidden"
+
   player2_name.innerText="Stockfish";
   draw_button.style.display="none";
-} 
-
-// if(timecontrol==="unlimited"|| mode==="stockfish"){
-//   clock_player1.style.display="none";
-//   clock_player2.style.display="none";
-// }
+}
 
 draw_button.addEventListener("click",()=>{
   if(game.game_over()||game_over)return;
 
   if(mode!=="online"){
     status.innerHTML="Game Ended. Players Agreed to a Draw";
+    stopTimer();
     game_over=true;
   }
 });
@@ -105,6 +115,7 @@ surrender_button.addEventListener("click",()=>{
 
   let game_turn=(game.turn()==='w')?('White'):('Black');
   status.innerHTML=`Game Ended. ${game_turn} has surrenderd!`;
+  stopTimer();
   game_over=true;
 });
 
@@ -120,3 +131,5 @@ takeback_button.addEventListener("click",()=>{
     }
   }
 });
+
+export function GameOver(){game_over=true;}

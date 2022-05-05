@@ -1,4 +1,5 @@
 /venv
+/static/js/tests
 .vscode
 __pycache__
 *.sql

@@ -89,10 +89,12 @@ def handle_login():
     cursor.execute(f'SELECT * from login_cred WHERE email="{email}"')
     data = cursor.fetchone()
     if not data:
+        cursor.close()
         return render_template(
             "login.html", isMsg=True, msg="Email or password is incorrect"
         )
     if data[-1] != password:
+        cursor.close()
         return render_template(
             "login.html", isMsg=True, msg="Email or password is incorrect"
         )
