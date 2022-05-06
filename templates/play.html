@@ -17,6 +17,15 @@
         var turn='{{ data.turn }}'
         var stockfishURL='{{ url_for("static", filename="js/stockfish.js") }}'
     </script>
+
+    {%if data.mode == "online"%}
+    <!-- <script src="../static/js/socket.js" type="module"></script> -->
+    <script type="module">
+        import { io } from '{{ url_for("static", filename="node_modules/socket.io-client/dist/socket.io.esm.min.js")}}';
+        var socket = io();
+    </script>
+    {% endif %}
+
     <script src="../static/js/jquery.min.js"></script>
     <script src="../static/js/chessboard.js"></script>
     <script src="../static/js/chessscript.js" type="module" defer></script>    

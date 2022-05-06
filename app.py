@@ -14,6 +14,7 @@ from flask import (
     session,
 )
 from flaskext.mysql import MySQL
+from flask_socketio import SocketIO, send
 
 app = Flask(__name__)
 mysql = MySQL()
@@ -23,6 +24,7 @@ app.config["MYSQL_DATABASE_DB"] = "db"
 app.config["MYSQL_DATABASE_HOST"] = "localhost"
 app.secret_key = "random string"
 mysql.init_app(app)
+socketio = SocketIO(app)
 db = mysql.connect()
 
 time_minutes = {"1": 1, "2": 5, "3": 10, "4": 15, "5": 30}
@@ -193,5 +195,12 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, "static"), "favicon.ico")
 
 
+@socketio.on('message')
+def handle_message(data):
+    print(data)
+    send(data)
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    # app.run(debug=True)
+    socketio.run(app, debug=True)
