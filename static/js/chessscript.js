@@ -9,7 +9,14 @@ var stockfish;
 function onDragStart (source, piece, position, orientation) {
   // do not pick up pieces if the game is over
   if (game.game_over()||game_over){return false} 
-
+ 
+  if(mode!=="offline"){
+    // only pick up pieces for the side to move / only pick up pieces for White
+    let side=(turn[0]==='w')?(piece.search(/^b/) ):(piece.search(/^w/) );
+    if ((side !== -1)) {
+      return false
+    }
+  }
   // only pick up pieces for the side to move
   if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
       (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
@@ -86,10 +93,10 @@ if(mode==="stockfish"){
   stockfish = new Worker(stockfishURL);
   stockfish.postMessage("uci");
   stockfish.postMessage("ucinewgame");
-  // if(game.turn()!==turn[0]){
-  //   stockfish.postMessage("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-  //   stockfish.postMessage("go depth 10");
-  // }
+  if(game.turn()!==turn[0]){
+    stockfish.postMessage("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+    stockfish.postMessage("go depth 10");
+  }
 
   stockfish.addEventListener('message', function (e){
     console.log(e.data);
@@ -128,7 +135,9 @@ player1_name.innerText=(player1)? (player1) : ("Player1");
 if(timecontrol==="unlimited"|| mode==="stockfish"){
   clock_player1.style.visibility="hidden"
   clock_player2.style.visibility="hidden"
+}
 
+if(mode==="stockfish"){
   player2_name.innerText="Stockfish";
   draw_button.style.display="none";
 }
@@ -147,6 +156,7 @@ surrender_button.addEventListener("click",()=>{
   if(game.game_over()||game_over) return;
 
   let game_turn=(game.turn()==='w')?('White'):('Black');
+  if(mode==="online"){game_turn=turn}
   status.innerHTML=`Game Ended. ${game_turn} has surrenderd!`;
   stopTimer();
   game_over=true;
@@ -156,11 +166,19 @@ takeback_button.addEventListener("click",()=>{
   if(game.game_over()||game_over) return;
 
   let undo=game.undo();
-
   if(undo){
     board.position(game.fen());
+    if(mode==="stockfish"){
+      stockfish.postMessage(`position fen ${game.fen()}`);
+      let undo=game.undo();
+      if(undo){
+        board.position(game.fen());
+        stockfish.postMessage(`position fen ${game.fen()}`);
+      }
+    }
+    swapPlayer();
     if(mode==="offline"){
-      board.flip()
+      board.flip();
     }
   }
 });

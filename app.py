@@ -37,7 +37,27 @@ def home():
 
 @app.route("/play/online", methods=["POST"])
 def play_online():
-    return render_template("play.html")
+    time_control = request.form.get("time_control")
+    minutes = time_minutes[request.form.get("minutes")]
+    seconds = time_seconds[request.form.get("seconds")]
+    turn = request.form.get("side")
+
+    if time_control == "unlimited":
+        minutes = None
+        seconds = None
+
+    if turn == "random":
+        turn = random.choice(sides)
+
+    data = {
+        "timecontrol": time_control,
+        "minutes": minutes,
+        "seconds": seconds,
+        "turn": turn,
+        "mode": "online",
+    }
+
+    return render_template("play.html", data=data)
 
 
 @app.route("/play/offline", methods=["POST"])

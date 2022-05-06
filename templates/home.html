@@ -74,7 +74,7 @@
                                     <div class="flex flex-col md:flex-row items-center justify-center gap-4">
                                         <h2 class="text-center font-bold">Time Control</h2>
 
-                                        <select id="select1" name="options" class="select select-info w-full max-w-xs">
+                                        <select id="select1" name="time_control" class="select select-info w-full max-w-xs">
                                             <option selected value="time">Real Time</option>
                                             <option value="unlimited">Unlimited</option>
                                         </select>
@@ -85,8 +85,8 @@
                                             Minutes per side
                                         </h3>
 
-                                        <input name="options" type="range" min="1" max="5" value="1" class="range" step="1">
-                                        <div class="w-full flex justify-between  p-2">
+                                        <input type="range" name="minutes" min="1" max="5" value="1" class="range" step="1">
+                                        <div class="w-full flex justify-between p-2">
                                             <span>1</span>
                                             <span>5</span>
                                             <span>10</span>
@@ -100,7 +100,7 @@
                                                 Seconds per increment
                                             </h3>
 
-                                            <input name="options" type="range" min="1" max="5" value="1" class="range" step="1">
+                                            <input type="range" name="seconds" min="1" max="5" value="1" class="range" step="1">
                                             <div class="w-full flex justify-between  p-2">
                                                 <span>3</span>
                                                 <span>5</span>
@@ -118,11 +118,11 @@
                                         </h3>
 
                                         <div class="btn-group">
-                                            <input type="radio" value="white" name="options" data-title="White"
+                                            <input type="radio" value="white" name="side" data-title="White"
                                                 class="btn">
-                                            <input type="radio" value="random" name="options" data-title="Random"
+                                            <input type="radio" value="random" name="side" data-title="Random"
                                                 class="btn" checked>
-                                            <input type="radio" value="black" name="options" data-title="Black"
+                                            <input type="radio" value="black" name="side" data-title="Black"
                                                 class="btn">
                                         </div>
                                     </div>
