@@ -1,10 +1,10 @@
 import {Chess} from './chess.js'
 import {Timer, startTimer, swapPlayer, stopTimer } from './chessclock.js';
 
-
-let board = null
+let board = null;
 let game_over=false; //chess.js library doens't provide a gameover flag to manually end the game
-const game = new Chess()
+const game = new Chess();
+var stockfish;
 
 function onDragStart (source, piece, position, orientation) {
   // do not pick up pieces if the game is over
@@ -32,7 +32,8 @@ function onDrop (source, target) {
   }
   else if(game.game_over()){
     stopTimer();
-
+    GameOver();
+    /*
     if(game.in_checkmate()){
       let game_turn=(game.turn()==='w')?('Black'):('White');
       status.innerHTML=`Checkmate! ${game_turn} Won!`;
@@ -49,6 +50,7 @@ function onDrop (source, target) {
     else if(game.insufficient_material()){
       status.innerHTML=`Game Ended. Insufficient Material!`;
     }
+    */
   }
   // illegal move
   if (move === null) return 'snapback'
@@ -58,9 +60,14 @@ function onDrop (source, target) {
 // for castling, en passant, pawn promotion
 function onSnapEnd () {
   board.position(game.fen())
-
   swapPlayer();
-  if(mode==="offline"){
+  
+  if(mode==="stockfish"){
+    stockfish.postMessage("position fen " + game.fen());
+    stockfish.postMessage("go depth 10");
+  }
+
+  else if(mode==="offline"){
     board.flip()
   }
 }
@@ -75,20 +82,46 @@ const config = {
 }
 board = Chessboard('board', config);
 
-let p1timer = new Timer('w', parseInt(minutes, 10));
-let p2timer = new Timer('b', parseInt(minutes, 10));
-startTimer(p1timer,p2timer)
+if(mode==="stockfish"){
+  stockfish = new Worker(stockfishURL);
+  stockfish.postMessage("uci");
+  stockfish.postMessage("ucinewgame");
+  // if(game.turn()!==turn[0]){
+  //   stockfish.postMessage("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+  //   stockfish.postMessage("go depth 10");
+  // }
+
+  stockfish.addEventListener('message', function (e){
+    console.log(e.data);
+    let info = e.data ? e.data : '';
+  
+    if (info.includes('bestmove') || info.includes('ponder')) {
+      const bestmove = info.split(/ +/)[1];
+      
+      game.move(bestmove, {promotion: 'q', sloppy: true});
+      board.position(game.fen());
+      if(game.game_over()){GameOver()}
+      stockfish.postMessage(`position fen ${game.fen()}`); // update fen of stockfish
+    }
+  });
+}
+
+if(timecontrol==="time"){
+  let p1timer = new Timer('w', parseInt(minutes, 10));
+  let p2timer = new Timer('b', parseInt(minutes, 10));
+  startTimer(p1timer,p2timer);
+}
 
 const player1_name=document.getElementById("player1"); //player1 label
-const player2_name=document.getElementById("player2");
-const status=document.getElementById("status");
+const player2_name=document.getElementById("player2"); //player2 label
+const status=document.getElementById("status"); //status label
 const clock_player1=document.getElementById("clock1");
 const clock_player2=document.getElementById("clock2");
 const draw_button=document.getElementById("offer_draw");
 const surrender_button=document.getElementById("surrender");
 const takeback_button=document.getElementById("take_back");
 
-//if the user is logged in display his user name
+//if the user is logged in display his username
 player1_name.innerText=(player1)? (player1) : ("Player1");
 
 // time unlimited hide clocks [to maintain ui diminsions]
@@ -132,4 +165,24 @@ takeback_button.addEventListener("click",()=>{
   }
 });
 
-export function GameOver(){game_over=true;}
+function GameOver(){
+  game_over=true;
+  
+  if(game.in_checkmate()){
+    let game_turn=(game.turn()==='w')?('Black'):('White');
+    status.innerHTML=`Checkmate! ${game_turn} Won!`;
+  }
+  else if(game.in_draw()){
+    status.innerHTML=`Game Ended. Draw!`;
+  }
+  else if(game.in_stalemate()){
+    status.innerHTML=`Game Ended. Stalemate!`;
+  }
+  else if(game.in_threefold_repetition()){
+    status.innerHTML=`Game Ended. Threefold Repetition!`;
+  }
+  else if(game.insufficient_material()){
+    status.innerHTML=`Game Ended. Insufficient Material!`;
+  }
+}
+export function set_game_over_flag(){game_over=true}

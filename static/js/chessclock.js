@@ -1,4 +1,4 @@
-import {GameOver} from './chessscript.js'
+import {set_game_over_flag} from './chessscript.js'
 
 const status=document.getElementById("status");
 let playing = false;
@@ -71,7 +71,7 @@ const startTimer = (p1timer,p2timer) => {
                     if (p1timer.seconds === 0 && p1timer.minutes === 0) {
                         // Stop timer.
                         clearInterval(timerId);
-                        GameOver();
+                        set_game_over_flag();
                         status.innerHTML=`Black wins! White time ran out!`;
                         playing = false;
                     }
@@ -96,7 +96,7 @@ const startTimer = (p1timer,p2timer) => {
                     if (p2timer.seconds === 0 && p2timer.minutes === 0) {
                         // Stop timer.
                         clearInterval(timerId);
-                        GameOver();
+                        set_game_over_flag();
                         status.innerHTML=`White wins! Black time ran out!`;
                         playing = false;
                     }
@@ -111,4 +111,4 @@ const stopTimer=()=>{
     playing=false;
 }
 
-export {Timer, startTimer, swapPlayer, stopTimer}
+export {Timer, startTimer, swapPlayer, stopTimer, padZero}
