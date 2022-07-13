@@ -35,7 +35,7 @@ def register():
 @auth.route("/logout")
 def logout():
     session.pop("username", None)
-    return redirect(url_for("/")) # ! check this!
+    return redirect(url_for("views.home"))
 
 # def handle_login():
 #     cursor = db.cursor()

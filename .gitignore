@@ -1,7 +1,7 @@
 /venv
-/static/js/tests
 .vscode
 __pycache__
 *.sql
 node_modules
 schema.png
+TODO.md

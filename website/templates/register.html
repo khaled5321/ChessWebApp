@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link href="../static/css/dist/output.css" rel="stylesheet">
 
     <title>KChess</title>
@@ -20,7 +21,7 @@
         </nav>
     </header>
 
-    <main class="">
+    <main>
         <div class="hero bg-base-200 pb-12">
             <div class="hero-content flex-col mt-12">
                 <div class="card w-[18.75rem] shadow-2xl bg-base-100">
@@ -30,10 +31,9 @@
                     {% if isMsg %}
                       <h2 class="mt-6 text-center" style="color: rgb(197, 122, 122);">{{msg}}</h2>
                     {% else %}
-                      
+                      <!-- ! ?? -->
                     {% endif %}
                     <form action="/register" method="post">
-                        <!--form///////////////////////////////////////////-->
                         <div class="card-body">
                             <div class="form-control">
                                 <label class="label">

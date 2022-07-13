@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../static/css/dist/output.css" rel="stylesheet">
+
+  <title>KChess</title>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar bg-primary text-primary-content justify-center">
+      <a href="/" class="normal-case text-xl ml-[-3.75rem]">
+        <img src="../static/img/pawn-svgrepo-com.svg" class="mask mask-hexagon mr-2" alt="pawn logo">
+        <h1 class="font-bold font-mono text-xl">KChess</h1>
+      </a>
+    </nav>
+  </header>
+
+  <main class="flex min-h-screen  bg-base-200 justify-center items-start">
+    <div>
+      <div class="hero-content flex-col">
+
+        <div class="card w-[18.75rem] shadow-2xl bg-base-100 mt-12">
+          <div class="text-center">
+            <h1 class="text-5xl font-bold mt-6">Login</h1>
+          </div>
+
+          {% if isMsg %}
+          <h2 class="mt-6 text-center" style="color: rgb(197, 122, 122);">{{msg}}</h2>
+          {% else %}
+          <!-- ! ?? -->
+          {% endif %}
+
+          <form action="/login" method="post">
+            <div class="card-body">
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Email</span>
+                </label>
+                <input required type="email" placeholder="email" class="input input-bordered" name="email">
+              </div>
+
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Password</span>
+                </label>
+                <input required type="password" placeholder="password" class="input input-bordered" name="pass"
+                  maxlength="20">
+
+                <p class="label-text-alt pt-4">Don't have account?
+                  <a href="/register" class="link link-accent">
+                    Register
+                  </a>
+                </p>
+              </div>
+
+              <div class="form-control mt-2">
+                <input type="submit" value="Login" class="btn btn-primary">
+              </div>
+              
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer footer-center p-4 bg-base-300 text-base-content">
+    <div>
+      <p>Made By <a href="https://github.com/khaled5321" class="link link-hover">Khaled Emad</a></p>
+    </div>
+  </footer>
+</body>
+
+</html>
