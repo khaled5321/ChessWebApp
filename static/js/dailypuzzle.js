@@ -16,14 +16,11 @@ async function fetchAsync(url) {
     return data;
 }
 
-// let data=await fetchAsync("https://lichess.org/api/puzzle/daily");
-// let pgn = data.game.pgn;
-// chess.load_pgn(pgn);
-// let fen = chess.fen();
-chess.load("r1bqk2r/ppp1bpp1/3p1n1p/4P3/2n1P3/2P2N2/PP3PPP/RNBQR1K1 w kq - 0 9")
-let fen="r1bqk2r/ppp1bpp1/3p1n1p/4P3/2n1P3/2P2N2/PP3PPP/RNBQR1K1 w kq - 0 9"
-// let solution = data.puzzle.solution;
-let solution= ["e5f6", "e7f6", "d1a4", "d8d7", "a4c4"]
+let data=await fetchAsync("https://lichess.org/api/puzzle/daily");
+let pgn = data.game.pgn;
+chess.load_pgn(pgn);
+let fen = chess.fen();
+let solution = data.puzzle.solution;
 let turn = chess.turn();
 game.fen=fen;
 game.solution=solution;
